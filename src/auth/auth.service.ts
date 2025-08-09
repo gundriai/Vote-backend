@@ -9,7 +9,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
   async socialLogin(profile: any, provider: SocialProvider) {
     const user = await this.usersService.upsertSocialUser({
