@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { UserRole } from 'src/types/enums';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: MongoRepository<User>,
+    private readonly usersRepository: Repository<User>,
   ) {}
 
   async upsertSocialUser(params: {
@@ -36,6 +37,7 @@ export class UsersService {
       email: params.email,
       name: params.name,
       photo: params.photo,
+      role:UserRole.NORMAL_USER,
       createdAt: now,
       updatedAt: now,
     });

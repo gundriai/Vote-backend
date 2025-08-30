@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 
 @Module({
@@ -18,12 +18,16 @@ import { User } from './users/user.entity';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'mongodb',
-        url: config.get<string>('MONGO_URL') || 'mongodb://localhost:27017/vote-backend',
-        database: config.get<string>('MONGO_DB') || 'vote',
+        type: 'postgres',
+        host: config.get<string>('DB_HOST') || 'localhost',
+        port: config.get<number>('DB_PORT') || 5432,
+        username: config.get<string>('DB_USERNAME') || 'postgres',
+        password: config.get<string>('DB_PASSWORD') || 'postgres',
+        database: config.get<string>('DB_NAME') || 'vote_backend',
         entities: [User],
         synchronize: true,
-        useUnifiedTopology: true,
+        logging: true,
+        ssl: { rejectUnauthorized: false }
       }),
     }),
     AuthModule,

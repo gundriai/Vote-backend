@@ -1,32 +1,36 @@
-import { Entity, ObjectIdColumn, ObjectId, Column, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import { UserRole } from '../types/enums';
 
 @Entity('users')
 export class User {
-  @ObjectIdColumn()
-  id!: ObjectId;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Index({ unique: true })
-  @Column()
+  @Index()
+  @Column({ type: 'varchar' })
   provider!: 'google' | 'facebook';
 
   @Index()
-  @Column()
+  @Column({ type: 'varchar' })
   providerId!: string;
 
   @Index({ unique: true })
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   email?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   name?: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   photo?: string;
 
-  @Column({ default: () => new Date() })
+  @Column({type: 'enum', enum: UserRole})
+  role?: UserRole;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
 
-  @Column({ default: () => new Date() })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt!: Date;
 }
 
