@@ -1,31 +1,24 @@
-import { UUID } from "crypto";
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Column } from "typeorm";
+
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+
 
 @Entity('banner')
 export class Banner {
-    @PrimaryGeneratedColumn()
-    id:UUID;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
-    image:string;
+    image: string;
 
     @Column()
-    title:string;
+    title: string;
 
     @Column()
-    subTitle:string;
+    subTitle: string;
 
     @Column()
-    button:BannerButton;
-
-}
-
-export class BannerButton{
-    @Column()
-    label:string;
+    buttonLabel: string;
 
     @Column()
-    url:string;
-
+    buttonUrl: string;
 }

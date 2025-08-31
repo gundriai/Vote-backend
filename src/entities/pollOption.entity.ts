@@ -1,21 +1,19 @@
-import { UUID } from "crypto";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Polls } from "./poll.entity";
 import { Candidate } from "./candidate.entity";
 
 @Entity('pollOption')
 export class PollOption{
 
-    @PrimaryGeneratedColumn()
-    id:UUID;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @Column()
-    pollId:Polls;
+    @Column({ type: 'int' })
+    pollId: number;
 
-    @Column()
-    label:string;
+    @Column({ type: 'varchar' })
+    label: string;
     
     @Column()
-    candidateId:Candidate;
+    candidateId?:Candidate;
 
 }

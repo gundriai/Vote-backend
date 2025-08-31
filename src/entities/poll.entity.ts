@@ -1,5 +1,4 @@
 import { PollType } from "src/types/enums";
-import { User } from "src/users/user.entity";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('polls')
@@ -25,16 +24,19 @@ export class Polls {
   @Column()
   mediaUrl:string;
 
-  @Column()
-  createdBy:User;
+  @Column({ type: 'uuid', nullable: true })
+  createdBy: string;
 
-  @Column()
-  createdAt:Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-  @Column()
-  updatedAt:Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
-  @Column()
-  comments:JSON;
+  @Column({ type: 'jsonb', nullable: true })
+  comments: any;
+
+  @Column({ default: false })
+  isHidden: boolean;
 
 }

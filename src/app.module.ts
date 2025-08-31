@@ -7,6 +7,12 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/user.entity';
 import { Admin } from './entities/admin.entity';
 import { SeederModule } from './seeder/seeder.module';
+import { ApiModule } from './api/api.module';
+import { Polls } from './entities/poll.entity';
+import { Candidate } from './entities/candidate.entity';
+import { PollOption } from './entities/pollOption.entity';
+import { Vote } from './entities/vote.entity';
+import { Banner } from './entities/banner.entity';
 
 @Module({
   imports: [
@@ -26,7 +32,7 @@ import { SeederModule } from './seeder/seeder.module';
         username: config.get<string>('DB_USERNAME') || 'postgres',
         password: config.get<string>('DB_PASSWORD') || 'postgres',
         database: config.get<string>('DB_NAME') || 'vote_backend',
-        entities: [User, Admin],
+        entities: [User, Admin, Polls, Candidate, PollOption, Vote, Banner],
         synchronize: true,
         logging: true,
         ssl: { rejectUnauthorized: false }
@@ -34,6 +40,7 @@ import { SeederModule } from './seeder/seeder.module';
     }),
     AuthModule,
     SeederModule,
+    ApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

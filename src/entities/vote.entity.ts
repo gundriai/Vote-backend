@@ -1,25 +1,21 @@
 import { Column, PrimaryGeneratedColumn } from "typeorm";
-import { Polls } from "./poll.entity";
-import { UUID } from "crypto";
-import { PollOption } from "./pollOption.entity";
-import { User } from "src/users/user.entity";
 
 export class Vote {
-    @PrimaryGeneratedColumn()
-    id:UUID;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @Column()
-    pollId:Polls;
+    @Column({ type: 'int' })
+    pollId: number;
 
-    @Column()
-    optionId:PollOption;
+    @Column({ type: 'uuid' })
+    optionId: string;
 
-    @Column()
-    userId:User;
+    @Column({ type: 'uuid' })
+    userId: string;
 
-    @Column()
-    createdAt:Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 
-    @Column()
-    updatedAt:Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
 }
