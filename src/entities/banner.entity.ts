@@ -21,4 +21,13 @@ export class Banner {
 
     @Column()
     buttonUrl: string;
+
+    @Column({ default: true })
+    isActive?: boolean;
+
+    constructor(partial?: Partial<Banner>) {
+        if (partial) {
+            Object.assign(this, partial);
+        }
+    }
 }

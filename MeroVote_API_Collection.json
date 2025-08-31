@@ -1,0 +1,688 @@
+{
+  "info": {
+    "name": "MeroVote API Collection",
+    "description": "Complete API collection for MeroVote polling application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Polls",
+      "item": [
+        {
+          "name": "Get All Polls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Polls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Visible Polls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/visible",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "visible"]
+            }
+          }
+        },
+        {
+          "name": "Get Hidden Polls (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/hidden",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "hidden"]
+            }
+          }
+        },
+        {
+          "name": "Get Polls by Type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/type/daily_rating",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "type", "daily_rating"]
+            }
+          }
+        },
+        {
+          "name": "Get Expired Polls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/expired",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "expired"]
+            }
+          }
+        },
+        {
+          "name": "Get Poll by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Poll (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Poll\",\n  \"description\": \"This is a sample poll for testing\",\n  \"type\": \"daily_rating\",\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\",\n  \"mediaUrl\": \"https://example.com/image.jpg\",\n  \"createdBy\": \"user-uuid\",\n  \"comments\": {},\n  \"isHidden\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/polls",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls"]
+            }
+          }
+        },
+        {
+          "name": "Update Poll (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Poll Title\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "1"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Poll Visibility (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/1/toggle-visibility",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "1", "toggle-visibility"]
+            }
+          }
+        },
+        {
+          "name": "Delete Poll (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Candidates",
+      "item": [
+        {
+          "name": "Get All Candidates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Search Candidates by Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/search?name=john",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "john"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Candidate by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/candidate-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "candidate-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Create Candidate (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"description\": \"A great candidate for the position\",\n  \"photo\": \"https://example.com/photo.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Update Candidate (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Smith\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/candidate-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "candidate-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Delete Candidate (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/candidate-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "candidate-uuid"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Poll Options",
+      "item": [
+        {
+          "name": "Get All Poll Options",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options"]
+            }
+          }
+        },
+        {
+          "name": "Get Poll Options by Poll ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options/poll/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options", "poll", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Poll Option by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options/option-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options", "option-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Create Poll Option (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pollId\": \"1\",\n  \"label\": \"Option A\",\n  \"candidateId\": \"candidate-uuid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options"]
+            }
+          }
+        },
+        {
+          "name": "Update Poll Option (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Updated Option Label\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options/option-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options", "option-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Delete Poll Option (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options/option-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options", "option-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Delete All Options for Poll (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/poll-options/poll/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "poll-options", "poll", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Votes",
+      "item": [
+        {
+          "name": "Get All Votes (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes"]
+            }
+          }
+        },
+        {
+          "name": "Get Votes by Poll ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/poll/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "poll", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Votes by User ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/user/user-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "user", "user-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Get Vote Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/statistics/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "statistics", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Vote Count by Poll ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/count/poll/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "count", "poll", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Vote Count by Option ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/count/option/option-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "count", "option", "option-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Get Vote by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/vote-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "vote-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Cast Vote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pollId\": \"1\",\n  \"optionId\": \"option-uuid\",\n  \"userId\": \"user-uuid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/votes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes"]
+            }
+          }
+        },
+        {
+          "name": "Update Vote (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"optionId\": \"new-option-uuid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/vote-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "vote-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Delete Vote (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/votes/vote-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "votes", "vote-uuid"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Banners",
+      "item": [
+        {
+          "name": "Get All Banners",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/banners",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Banners",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/banners/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Banner by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/banners/banner-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners", "banner-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Create Banner (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image\": \"https://example.com/banner.jpg\",\n  \"title\": \"Welcome to MeroVote\",\n  \"subTitle\": \"Your voice matters\",\n  \"button\": {\n    \"label\": \"Get Started\",\n    \"url\": \"/get-started\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/banners",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners"]
+            }
+          }
+        },
+        {
+          "name": "Update Banner (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Banner Title\",\n  \"subTitle\": \"Updated subtitle\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/banners/banner-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners", "banner-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Delete Banner (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/banners/banner-uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners", "banner-uuid"]
+            }
+          }
+        },
+        {
+          "name": "Reorder Banners (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  \"banner-uuid-1\",\n  \"banner-uuid-2\",\n  \"banner-uuid-3\"\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/banners/reorder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "banners", "reorder"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Set JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Set the JWT token from the response",
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.access_token) {",
+                  "        pm.collectionVariables.set('jwtToken', response.access_token);",
+                  "        console.log('JWT Token set successfully');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

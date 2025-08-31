@@ -3,8 +3,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('polls')
 export class Polls {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   title: string;
@@ -39,4 +39,9 @@ export class Polls {
   @Column({ default: false })
   isHidden: boolean;
 
+  constructor(partial?: Partial<Polls>) {
+      if (partial) {
+          Object.assign(this, partial);
+      }
+  }
 }
