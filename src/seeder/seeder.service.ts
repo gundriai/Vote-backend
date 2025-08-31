@@ -21,14 +21,14 @@ export class SeederService implements OnModuleInit {
      * Seeds the admin email in the admins table if not present.
      */
     async seedAdmin() {
+        const existingAdmin = await this.adminRepo.findOne({ where: { email: process.env.ROOT_ADMIN_EMAIL } });
+        if (existingAdmin) {
+            console.log(`✅ Admin already exists with email: ${existingAdmin.email}`);
+            return;
+        }
         const email = process.env.ROOT_ADMIN_EMAIL;
         if (!email) {
             console.warn('❗ ROOT_ADMIN_EMAIL missing in .env');
-            return;
-        }
-        const existingAdmin = await this.adminRepo.findOne({ where: { email } });
-        if (existingAdmin) {
-            console.log(`✅ Admin already exists with email: ${email}`);
             return;
         }
         const admin = this.adminRepo.create({ email });

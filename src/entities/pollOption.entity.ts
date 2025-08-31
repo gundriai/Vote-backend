@@ -17,6 +17,5 @@ export class PollOption{
     
     @Column()
     candidateId:Candidate;
-    
 
 }

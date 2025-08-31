@@ -27,7 +27,13 @@ export class AuthService {
       provider: user.provider,
       role: user.role,
     });
-    return { accessToken, user };
+
+    // Add a redirect URL to the response for the frontend to handle
+    return {
+      accessToken,
+      user,
+      redirectUrl: '/?login=success',
+    };
   }
 }
 
