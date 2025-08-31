@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit, Inject } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/user.entity';
+import { Admin } from './entities/admin.entity';
+import { SeederModule } from './seeder/seeder.module';
 
 @Module({
   imports: [
@@ -24,13 +26,14 @@ import { User } from './users/user.entity';
         username: config.get<string>('DB_USERNAME') || 'postgres',
         password: config.get<string>('DB_PASSWORD') || 'postgres',
         database: config.get<string>('DB_NAME') || 'vote_backend',
-        entities: [User],
+        entities: [User, Admin],
         synchronize: true,
         logging: true,
         ssl: { rejectUnauthorized: false }
       }),
     }),
     AuthModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],
