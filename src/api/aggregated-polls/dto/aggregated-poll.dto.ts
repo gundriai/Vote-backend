@@ -20,6 +20,16 @@ export class AggregatedCandidate {
   voteCount: number;
 }
 
+export class AggregatedPollOption {
+  id: string;
+  pollId: string;
+  label: string | null;
+  icon: string | null;
+  color: string | null;
+  candidateId: string | null;
+  voteCount: number;
+}
+
 export class AggregatedPoll {
   id: string;
   title: string;
@@ -35,6 +45,7 @@ export class AggregatedPoll {
   createdBy: string;
   createdAt: Date;
   candidates?: AggregatedCandidate[];
+  pollOptions?: AggregatedPollOption[];
   voteCounts?: { [key: string]: number };
   totalComments: number;
   totalVotes: number;

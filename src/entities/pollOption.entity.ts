@@ -21,6 +21,11 @@ export class PollOption{
     @Column({nullable: true})
     label?: string;
 
+    @Column({nullable: true})
+    icon?: string;
+
+    @Column({nullable: true})
+    color?: string;
 
     @Column({ type: 'uuid', nullable: true })
     candidateId?: string;

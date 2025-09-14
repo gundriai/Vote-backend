@@ -184,6 +184,8 @@ export class PollsService {
           const pollOption = this.pollOptionsRepository.create({
             pollId: savedPoll.id,
             label: voteOption.label,
+            icon: voteOption.icon,
+            color: voteOption.color,
           });
           return pollOption;
         });

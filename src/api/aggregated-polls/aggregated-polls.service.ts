@@ -10,6 +10,7 @@ import {
   AggregatedPoll, 
   AggregatedComment, 
   AggregatedCandidate, 
+  AggregatedPollOption,
   AggregatedPollsResponse 
 } from './dto/aggregated-poll.dto';
 import { PollCategories } from '../../types/enums';
@@ -115,6 +116,20 @@ export class AggregatedPollsService {
       };
     });
 
+    // Aggregate poll options with vote counts
+    const aggregatedPollOptions: AggregatedPollOption[] = pollOptions.map(option => {
+      const optionVotes = votes.filter(vote => vote.optionId === option.id);
+      return {
+        id: option.id,
+        pollId: poll.id,
+        label: option.label,
+        icon: option.icon,
+        color: option.color,
+        candidateId: option.candidateId,
+        voteCount: optionVotes.length,
+      };
+    });
+
     // Calculate vote counts for reaction-based polls
     const voteCounts: { [key: string]: number } = {};
     if (poll.type === PollType.REACTION_BASED) {
@@ -157,6 +172,7 @@ export class AggregatedPollsService {
       createdBy: poll.createdBy || '',
       createdAt: poll.createdAt,
       candidates: aggregatedCandidates,
+      pollOptions: aggregatedPollOptions,
       voteCounts: Object.keys(voteCounts).length > 0 ? voteCounts : undefined,
       totalComments,
       totalVotes,
