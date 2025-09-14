@@ -1,4 +1,5 @@
 import { PollType } from "src/types/enums";
+import { PollCategories } from "src/types/enums";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('polls')
@@ -12,8 +13,17 @@ export class Polls {
   @Column()
   description: string;
 
+
   @Column({type:'enum',enum:PollType})
   type:PollType;
+
+  @Column({
+    type: 'enum',
+    enum: PollCategories,
+    array: true,
+    nullable: true
+  })
+  category: PollCategories[];
 
   @Column()
   startDate:Date;

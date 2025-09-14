@@ -12,6 +12,7 @@ import {
 import { PollsService } from './polls.service';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { CreateComprehensivePollDto } from './dto/create-comprehensive-poll.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -28,6 +29,13 @@ export class PollsController {
     return this.pollsService.create(createPollDto);
   }
 
+  @Post('comprehensive')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN_USER)
+  createComprehensive(@Body() createComprehensivePollDto: CreateComprehensivePollDto) {
+    return this.pollsService.createComprehensive(createComprehensivePollDto);
+  }
+
   @Get()
   findAll() {
     return this.pollsService.findAll();
@@ -41,6 +49,11 @@ export class PollsController {
   @Get('type/:type')
   findByType(@Param('type') type: string) {
     return this.pollsService.findByType(type);
+  }
+
+  @Get('category/:category')
+  findByCategory(@Param('category') category: string) {
+    return this.pollsService.findByCategory(category);
   }
 
   @Get('expired')

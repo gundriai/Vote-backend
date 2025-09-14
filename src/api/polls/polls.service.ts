@@ -2,14 +2,21 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Polls } from '../../entities/poll.entity';
+import { Candidate } from '../../entities/candidate.entity';
+import { PollOption } from '../../entities/pollOption.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { CreateComprehensivePollDto } from './dto/create-comprehensive-poll.dto';
 
 @Injectable()
 export class PollsService {
   constructor(
     @InjectRepository(Polls)
     private pollsRepository: Repository<Polls>,
+    @InjectRepository(Candidate)
+    private candidatesRepository: Repository<Candidate>,
+    @InjectRepository(PollOption)
+    private pollOptionsRepository: Repository<PollOption>,
   ) {}
 
   async create(createPollDto: CreatePollDto): Promise<Polls> {
@@ -20,6 +27,7 @@ export class PollsService {
       createdAt: new Date(),
       updatedAt: new Date(),
       isHidden: createPollDto.isHidden || false,
+      category: createPollDto.category || [],
     });
     return await this.pollsRepository.save(poll);
   }
@@ -86,6 +94,15 @@ export class PollsService {
     });
   }
 
+  async findByCategory(category: string): Promise<Polls[]> {
+    return await this.pollsRepository
+      .createQueryBuilder('poll')
+      .where('poll.category @> :category', { category: [category] })
+      .andWhere('poll.isHidden = :isHidden', { isHidden: false })
+      .orderBy('poll.createdAt', 'DESC')
+      .getMany();
+  }
+
   async findExpired(): Promise<Polls[]> {
     const now = new Date();
     return await this.pollsRepository
@@ -108,5 +125,85 @@ export class PollsService {
     poll.isHidden = !poll.isHidden;
     poll.updatedAt = new Date();
     return await this.pollsRepository.save(poll);
+  }
+
+  async createComprehensive(createComprehensivePollDto: CreateComprehensivePollDto): Promise<Polls> {
+    // Start a transaction to ensure all-or-nothing creation
+    const queryRunner = this.pollsRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // 1. Create the poll
+      const poll = this.pollsRepository.create({
+        title: createComprehensivePollDto.title,
+        description: createComprehensivePollDto.description,
+        type: createComprehensivePollDto.type,
+        category: createComprehensivePollDto.category || [],
+        startDate: new Date(createComprehensivePollDto.startDate),
+        endDate: new Date(createComprehensivePollDto.endDate),
+        mediaUrl: createComprehensivePollDto.mediaUrl || '',
+        createdBy: createComprehensivePollDto.createdBy || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isHidden: createComprehensivePollDto.isHidden || false,
+        comments: createComprehensivePollDto.comments || [],
+      });
+
+      const savedPoll = await queryRunner.manager.save(Polls, poll);
+
+      // 2. Create candidates if provided (for ONE_VS_ONE polls)
+      if (createComprehensivePollDto.candidates && createComprehensivePollDto.candidates.length > 0) {
+        const candidates = createComprehensivePollDto.candidates.map(candidateData => {
+          const candidate = this.candidatesRepository.create({
+            name: candidateData.name,
+            description: candidateData.description || '',
+            photo: candidateData.imageUrl || '',
+          });
+          return candidate;
+        });
+
+        const savedCandidates = await queryRunner.manager.save(Candidate, candidates);
+
+        // 3. Create poll options for candidates
+        const pollOptions = savedCandidates.map(candidate => {
+          const pollOption = this.pollOptionsRepository.create({
+            pollId: savedPoll.id,
+            candidateId: candidate.id,
+            label: candidate.name,
+          });
+          return pollOption;
+        });
+
+        await queryRunner.manager.save(PollOption, pollOptions);
+      }
+
+      // 4. Create poll options for vote options (for REACTION_BASED polls)
+      if (createComprehensivePollDto.voteOptions && createComprehensivePollDto.voteOptions.length > 0) {
+        const pollOptions = createComprehensivePollDto.voteOptions.map(voteOption => {
+          const pollOption = this.pollOptionsRepository.create({
+            pollId: savedPoll.id,
+            label: voteOption.label,
+          });
+          return pollOption;
+        });
+
+        await queryRunner.manager.save(PollOption, pollOptions);
+      }
+
+      // 5. Commit the transaction
+      await queryRunner.commitTransaction();
+
+      // 6. Return the created poll with all relations
+      return await this.findOne(savedPoll.id);
+
+    } catch (error) {
+      // Rollback the transaction on error
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(`Failed to create comprehensive poll: ${error.message}`);
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
+    }
   }
 }

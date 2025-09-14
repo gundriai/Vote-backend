@@ -8,6 +8,7 @@ import { User } from './users/user.entity';
 import { Admin } from './entities/admin.entity';
 import { SeederModule } from './seeder/seeder.module';
 import { ApiModule } from './api/api.module';
+import { AggregatedPollsModule } from './api/aggregated-polls/aggregated-polls.module';
 import { Polls } from './entities/poll.entity';
 import { Candidate } from './entities/candidate.entity';
 import { PollOption } from './entities/pollOption.entity';
@@ -34,13 +35,14 @@ import { Banner } from './entities/banner.entity';
         database: config.get<string>('DB_NAME') || 'vote_backend',
         entities: [User, Admin, Polls, Candidate, PollOption, Vote, Banner],
         synchronize: true,
-        logging: true,
+        logging: false,
         ssl: { rejectUnauthorized: false }
       }),
     }),
     AuthModule,
     SeederModule,
     ApiModule,
+    AggregatedPollsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

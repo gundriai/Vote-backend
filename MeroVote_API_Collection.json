@@ -26,10 +26,51 @@
       }
     ]
   },
-  "item": [
-    {
-      "name": "Polls",
       "item": [
+        {
+          "name": "Aggregated Polls",
+          "item": [
+            {
+              "name": "Get All Aggregated Polls",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/aggregated-polls",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "aggregated-polls"]
+                }
+              }
+            },
+            {
+              "name": "Get Aggregated Polls by Category",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/aggregated-polls/category/Political",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "aggregated-polls", "category", "Political"]
+                }
+              }
+            },
+            {
+              "name": "Get Single Aggregated Poll",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/aggregated-polls/poll-id-here",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "aggregated-polls", "poll-id-here"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Polls",
+          "item": [
         {
           "name": "Get All Polls",
           "request": {
@@ -91,6 +132,18 @@
           }
         },
         {
+          "name": "Get Polls by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/category/Political",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "category", "Political"]
+            }
+          }
+        },
+        {
           "name": "Get Expired Polls",
           "request": {
             "method": "GET",
@@ -126,12 +179,33 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Sample Poll\",\n  \"description\": \"This is a sample poll for testing\",\n  \"type\": \"daily_rating\",\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\",\n  \"mediaUrl\": \"https://example.com/image.jpg\",\n  \"createdBy\": \"user-uuid\",\n  \"comments\": {},\n  \"isHidden\": false\n}"
+              "raw": "{\n  \"title\": \"Sample Poll\",\n  \"description\": \"This is a sample poll for testing\",\n  \"type\": \"daily_rating\",\n  \"category\": [\"Daily\"],\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\",\n  \"mediaUrl\": \"https://example.com/image.jpg\",\n  \"createdBy\": \"user-uuid\",\n  \"comments\": {},\n  \"isHidden\": false\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/polls",
               "host": ["{{baseUrl}}"],
               "path": ["api", "polls"]
+            }
+          }
+        },
+        {
+          "name": "Create Comprehensive Poll (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Who should be the next Prime Minister?\",\n  \"description\": \"Choose your preferred candidate for the next Prime Minister\",\n  \"type\": \"ONE_VS_ONE\",\n  \"category\": [\"Political\"],\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\",\n  \"mediaUrl\": \"https://example.com/poll-image.jpg\",\n  \"createdBy\": \"admin\",\n  \"isHidden\": false,\n  \"candidates\": [\n    {\n      \"name\": \"Ravi Lamichhane\",\n      \"description\": \"Rastriya Swatantra Party\",\n      \"imageUrl\": \"https://example.com/ravi.jpg\"\n    },\n    {\n      \"name\": \"Gagan Thapa\",\n      \"description\": \"Nepali Congress\",\n      \"imageUrl\": \"https://example.com/gagan.jpg\"\n    }\n  ],\n  \"comments\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/polls/comprehensive",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "polls", "comprehensive"]
             }
           }
         },

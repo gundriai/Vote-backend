@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsDateString, IsOptional, IsUUID } from 'class-validator';
-import { PollType } from '../../../types/enums';
+import { IsString, IsEnum, IsDateString, IsOptional, IsUUID, IsArray } from 'class-validator';
+import { PollType, PollCategories } from '../../../types/enums';
 
 export class CreatePollDto {
   @IsString()
@@ -10,6 +10,11 @@ export class CreatePollDto {
 
   @IsEnum(PollType)
   type: PollType;
+
+  @IsArray()
+  @IsEnum(PollCategories, { each: true })
+  @IsOptional()
+  category?: PollCategories[];
 
   @IsDateString()
   startDate: string;
