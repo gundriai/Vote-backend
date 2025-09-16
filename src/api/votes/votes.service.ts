@@ -39,11 +39,10 @@ export class VotesService {
     });
 
     if (existingVote) {
-      throw new BadRequestException('User has already voted in this poll');
+      throw new BadRequestException('Already Voted.');
     }
 
     const vote = this.votesRepository.create({
-      ...createVoteDto,
       pollId: createVoteDto.pollId,
       optionId: createVoteDto.optionId,
       userId: createVoteDto.userId,
