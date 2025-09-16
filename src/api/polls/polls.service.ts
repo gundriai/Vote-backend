@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Polls } from '../../entities/poll.entity';
 import { Candidate } from '../../entities/candidate.entity';
 import { PollOption } from '../../entities/pollOption.entity';
+import { Vote } from '../../entities/vote.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { CreateComprehensivePollDto } from './dto/create-comprehensive-poll.dto';
@@ -83,8 +84,41 @@ export class PollsService {
   }
 
   async remove(id: string): Promise<void> {
-    const poll = await this.findOne(id);
-    await this.pollsRepository.remove(poll);
+    // Start a transaction to ensure all-or-nothing deletion
+    const queryRunner = this.pollsRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // First, verify the poll exists
+      const poll = await queryRunner.manager.findOne(Polls, { where: { id } });
+      if (!poll) {
+        throw new NotFoundException('Poll not found');
+      }
+
+      // 1. Delete all votes for this poll
+      const votesDeleted = await queryRunner.manager.delete(Vote, { pollId: id });
+      console.log(`Deleted ${votesDeleted.affected || 0} votes for poll ${id}`);
+
+      // 2. Delete all poll options for this poll
+      const optionsDeleted = await queryRunner.manager.delete(PollOption, { pollId: id });
+      console.log(`Deleted ${optionsDeleted.affected || 0} poll options for poll ${id}`);
+
+      // 3. Finally, delete the poll itself
+      const pollDeleted = await queryRunner.manager.delete(Polls, { id });
+      console.log(`Deleted poll ${id}`);
+
+      // Commit the transaction
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      // Rollback the transaction on error
+      await queryRunner.rollbackTransaction();
+      console.error('Error deleting poll:', error);
+      throw error;
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
+    }
   }
 
   async findByType(type: string): Promise<Polls[]> {
