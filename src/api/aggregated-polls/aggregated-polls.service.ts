@@ -123,6 +123,7 @@ export class AggregatedPollsService {
         id: option.id,
         pollId: poll.id,
         label: option.label,
+        type: option.type,
         icon: option.icon,
         color: option.color,
         candidateId: option.candidateId,
@@ -133,10 +134,10 @@ export class AggregatedPollsService {
     // Calculate vote counts for reaction-based polls
     const voteCounts: { [key: string]: number } = {};
     if (poll.type === PollType.REACTION_BASED) {
-      // For reaction-based polls, count votes by option label
+      // For reaction-based polls, count votes by option type
       pollOptions.forEach(option => {
         const optionVotes = votes.filter(vote => vote.optionId === option.id);
-        voteCounts[option.label || 'unknown'] = optionVotes.length;
+        voteCounts[option.type || option.label || 'unknown'] = optionVotes.length;
       });
     }
 
@@ -148,8 +149,8 @@ export class AggregatedPollsService {
     const totalVotes = votes.length;
     const totalComments = comments.length;
 
-    // Check if user has already voted on this poll
-    let alreadyVoted = false;
+    // Check if user has already voted on this poll and get the option they chose
+    let votedDetails = { alreadyVoted: false, optionChosen: undefined };
     if (userId) {
       const userVote = await this.votesRepository.findOne({
         where: {
@@ -157,7 +158,25 @@ export class AggregatedPollsService {
           userId: userId,
         },
       });
-      alreadyVoted = !!userVote;
+      
+      if (userVote) {
+        // For reaction-based polls, we need to find the poll option to get the type
+        if (poll.type === 'REACTION_BASED') {
+          const pollOption = await this.pollOptionsRepository.findOne({
+            where: { id: userVote.optionId }
+          });
+          votedDetails = {
+            alreadyVoted: true,
+            optionChosen: pollOption?.type || pollOption?.label || userVote.optionId
+          };
+        } else {
+          // For comparison polls, we can use the optionId directly
+          votedDetails = {
+            alreadyVoted: true,
+            optionChosen: userVote.optionId
+          };
+        }
+      }
     }
 
     return {
@@ -188,7 +207,7 @@ export class AggregatedPollsService {
       voteCounts: Object.keys(voteCounts).length > 0 ? voteCounts : undefined,
       totalComments,
       totalVotes,
-      alreadyVoted,
+      votedDetails,
     };
   }
 

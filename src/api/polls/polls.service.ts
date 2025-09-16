@@ -218,6 +218,7 @@ export class PollsService {
           const pollOption = this.pollOptionsRepository.create({
             pollId: savedPoll.id,
             label: voteOption.label,
+            type: voteOption.type, // Save the type field
             icon: voteOption.icon,
             color: voteOption.color,
           });

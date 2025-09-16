@@ -24,10 +24,16 @@ export class AggregatedPollOption {
   id: string;
   pollId: string;
   label: string | null;
+  type: string | null;
   icon: string | null;
   color: string | null;
   candidateId: string | null;
   voteCount: number;
+}
+
+export class VotedDetails {
+  alreadyVoted: boolean;
+  optionChosen?: string; // This will be the pollOptionId or vote type that was chosen
 }
 
 export class AggregatedPoll {
@@ -49,7 +55,7 @@ export class AggregatedPoll {
   voteCounts?: { [key: string]: number };
   totalComments: number;
   totalVotes: number;
-  alreadyVoted: boolean;
+  votedDetails: VotedDetails;
 }
 
 export class AggregatedPollsResponse {

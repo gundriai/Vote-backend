@@ -22,6 +22,9 @@ export class PollOption{
     label?: string;
 
     @Column({nullable: true})
+    type?: string;
+
+    @Column({nullable: true})
     icon?: string;
 
     @Column({nullable: true})
