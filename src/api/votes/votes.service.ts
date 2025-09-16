@@ -5,6 +5,7 @@ import { Vote } from '../../entities/vote.entity';
 import { Polls } from '../../entities/poll.entity';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
+import { PollVoteStatusMessages } from '../../types/error-messages';
 
 @Injectable()
 export class VotesService {
@@ -22,12 +23,12 @@ export class VotesService {
     });
     
     if (!poll) {
-      throw new NotFoundException(`Poll with ID ${createVoteDto.pollId} not found`);
+      throw new NotFoundException(PollVoteStatusMessages.POLL_NOT_FOUND);
     }
 
     const now = new Date();
     if (now < poll.startDate || now > poll.endDate) {
-      throw new BadRequestException('Poll is not active');
+      throw new BadRequestException(PollVoteStatusMessages.POLL_NOT_ACTIVE);
     }
 
     // Check if user has already voted in this poll
@@ -39,7 +40,7 @@ export class VotesService {
     });
 
     if (existingVote) {
-      throw new BadRequestException('Already Voted.');
+      throw new BadRequestException(PollVoteStatusMessages.ALREADY_VOTED);
     }
 
     const vote = this.votesRepository.create({
