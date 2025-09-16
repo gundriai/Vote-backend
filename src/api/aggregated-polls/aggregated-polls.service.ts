@@ -200,4 +200,44 @@ export class AggregatedPollsService {
 
     return this.aggregatePollData(poll, userId);
   }
+
+  async getAllAggregatedPollsForAdmin(userId?: string): Promise<AggregatedPollsResponse> {
+    // Get ALL polls (including hidden ones) for admin
+    const polls = await this.pollsRepository
+      .createQueryBuilder('poll')
+      .orderBy('poll.createdAt', 'DESC')
+      .getMany();
+
+    // Aggregate data for each poll
+    const aggregatedPolls: AggregatedPoll[] = [];
+
+    for (const poll of polls) {
+      const aggregatedPoll = await this.aggregatePollData(poll, userId);
+      aggregatedPolls.push(aggregatedPoll);
+    }
+
+    // Calculate summary statistics
+    const totalVotes = aggregatedPolls.reduce((sum, poll) => sum + poll.totalVotes, 0);
+    const totalComments = aggregatedPolls.reduce((sum, poll) => sum + poll.totalComments, 0);
+
+    // Get categories and types with counts for response
+    const categories: { [key: string]: number } = {};
+    const types: { [key: string]: number } = {};
+
+    aggregatedPolls.forEach(poll => {
+      poll.category.forEach(cat => {
+        categories[cat] = (categories[cat] || 0) + 1;
+      });
+      types[poll.type] = (types[poll.type] || 0) + 1;
+    });
+
+    return {
+      polls: aggregatedPolls,
+      totalPolls: aggregatedPolls.length,
+      totalVotes,
+      totalComments,
+      categories,
+      types,
+    };
+  }
 }

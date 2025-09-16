@@ -42,6 +42,14 @@ export class AggregatedPollsController {
     return this.aggregatedPollsService.getAggregatedPolls(category, userId);
   }
 
+  @Get('admin/all')
+  async getAllAggregatedPollsForAdmin(
+    @Headers('authorization') authorization?: string
+  ): Promise<AggregatedPollsResponse> {
+    const userId = this.extractUserIdFromToken(authorization);
+    return this.aggregatedPollsService.getAllAggregatedPollsForAdmin(userId);
+  }
+
   @Get(':id')
   async getAggregatedPollById(
     @Param('id') id: string,
