@@ -28,7 +28,7 @@ export class AggregatedPollsService {
     private votesRepository: Repository<Vote>,
   ) {}
 
-  async getAggregatedPolls(category?: string): Promise<AggregatedPollsResponse> {
+  async getAggregatedPolls(category?: string, userId?: string): Promise<AggregatedPollsResponse> {
     // Get all visible polls
     let pollsQuery = this.pollsRepository
       .createQueryBuilder('poll')
@@ -47,7 +47,7 @@ export class AggregatedPollsService {
     const aggregatedPolls: AggregatedPoll[] = [];
 
     for (const poll of polls) {
-      const aggregatedPoll = await this.aggregatePollData(poll);
+      const aggregatedPoll = await this.aggregatePollData(poll, userId);
       aggregatedPolls.push(aggregatedPoll);
     }
 
@@ -79,7 +79,7 @@ export class AggregatedPollsService {
     };
   }
 
-  private async aggregatePollData(poll: Polls): Promise<AggregatedPoll> {
+  private async aggregatePollData(poll: Polls, userId?: string): Promise<AggregatedPoll> {
     // Get poll options for this poll
     const pollOptions = await this.pollOptionsRepository.find({
       where: { pollId: poll.id },
@@ -148,6 +148,18 @@ export class AggregatedPollsService {
     const totalVotes = votes.length;
     const totalComments = comments.length;
 
+    // Check if user has already voted on this poll
+    let alreadyVoted = false;
+    if (userId) {
+      const userVote = await this.votesRepository.findOne({
+        where: {
+          pollId: poll.id,
+          userId: userId,
+        },
+      });
+      alreadyVoted = !!userVote;
+    }
+
     return {
       id: poll.id,
       title: poll.title,
@@ -176,15 +188,16 @@ export class AggregatedPollsService {
       voteCounts: Object.keys(voteCounts).length > 0 ? voteCounts : undefined,
       totalComments,
       totalVotes,
+      alreadyVoted,
     };
   }
 
-  async getAggregatedPollById(id: string): Promise<AggregatedPoll | null> {
+  async getAggregatedPollById(id: string, userId?: string): Promise<AggregatedPoll | null> {
     const poll = await this.pollsRepository.findOne({ where: { id } });
     if (!poll) {
       return null;
     }
 
-    return this.aggregatePollData(poll);
+    return this.aggregatePollData(poll, userId);
   }
 }
