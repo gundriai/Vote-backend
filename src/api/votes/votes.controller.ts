@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { VotesService } from './votes.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
@@ -18,11 +19,14 @@ import { UserRole } from '../../types/enums';
 
 @Controller('api/votes')
 export class VotesController {
+  private readonly logger = new Logger(VotesController.name);
+
   constructor(private readonly votesService: VotesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createVoteDto: CreateVoteDto) {
+    this.logger.log('Creating new vote');
     return this.votesService.create(createVoteDto);
   }
 
@@ -35,6 +39,7 @@ export class VotesController {
 
   @Get('poll/:pollId')
   findByPollId(@Param('pollId') pollId: string) {
+    this.logger.log(`Getting votes for poll: ${pollId}`);
     return this.votesService.findByPollId(pollId);
   }
 

@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { PollsService } from './polls.service';
 import { CreatePollDto } from './dto/create-poll.dto';
@@ -20,12 +21,15 @@ import { UserRole } from '../../types/enums';
 
 @Controller('api/polls')
 export class PollsController {
+  private readonly logger = new Logger(PollsController.name);
+
   constructor(private readonly pollsService: PollsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN_USER)
   create(@Body() createPollDto: CreatePollDto) {
+    this.logger.log('Creating new poll');
     return this.pollsService.create(createPollDto);
   }
 
@@ -38,6 +42,7 @@ export class PollsController {
 
   @Get()
   findAll() {
+    this.logger.log('Getting all polls');
     return this.pollsService.findAll();
   }
 

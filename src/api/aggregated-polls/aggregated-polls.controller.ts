@@ -1,10 +1,12 @@
-import { Controller, Get, Query, Param, Headers } from '@nestjs/common';
+import { Controller, Get, Query, Param, Headers, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AggregatedPollsService } from './aggregated-polls.service';
 import { AggregatedPollsResponse, AggregatedPoll } from './dto/aggregated-poll.dto';
 
 @Controller('api/aggregated-polls')
 export class AggregatedPollsController {
+  private readonly logger = new Logger(AggregatedPollsController.name);
+
   constructor(
     private readonly aggregatedPollsService: AggregatedPollsService,
     private readonly jwtService: JwtService,
@@ -29,7 +31,9 @@ export class AggregatedPollsController {
     @Query('category') category?: string,
     @Headers('authorization') authorization?: string
   ): Promise<AggregatedPollsResponse> {
+    this.logger.log(`Getting aggregated polls${category ? ` for category: ${category}` : ''}`);
     const userId = this.extractUserIdFromToken(authorization);
+    this.logger.log(`User ID extracted: ${userId || 'anonymous'}`);
     return this.aggregatedPollsService.getAggregatedPolls(category, userId);
   }
 
@@ -38,7 +42,9 @@ export class AggregatedPollsController {
     @Param('category') category: string,
     @Headers('authorization') authorization?: string
   ): Promise<AggregatedPollsResponse> {
+    this.logger.log(`Getting aggregated polls for category: ${category}`);
     const userId = this.extractUserIdFromToken(authorization);
+    this.logger.log(`User ID extracted: ${userId || 'anonymous'}`);
     return this.aggregatedPollsService.getAggregatedPolls(category, userId);
   }
 
@@ -46,7 +52,9 @@ export class AggregatedPollsController {
   async getAllAggregatedPollsForAdmin(
     @Headers('authorization') authorization?: string
   ): Promise<AggregatedPollsResponse> {
+    this.logger.log('Getting all aggregated polls for admin');
     const userId = this.extractUserIdFromToken(authorization);
+    this.logger.log(`Admin user ID: ${userId}`);
     return this.aggregatedPollsService.getAllAggregatedPollsForAdmin(userId);
   }
 
@@ -55,7 +63,9 @@ export class AggregatedPollsController {
     @Param('id') id: string,
     @Headers('authorization') authorization?: string
   ): Promise<AggregatedPoll | null> {
+    this.logger.log(`Getting aggregated poll by ID: ${id}`);
     const userId = this.extractUserIdFromToken(authorization);
+    this.logger.log(`User ID extracted: ${userId || 'anonymous'}`);
     return this.aggregatedPollsService.getAggregatedPollById(id, userId);
   }
 }

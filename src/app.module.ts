@@ -35,7 +35,6 @@ import { Banner } from './entities/banner.entity';
         database: config.get<string>('DB_NAME') || 'vote_backend',
         entities: [User, Admin, Polls, Candidate, PollOption, Vote, Banner],
         synchronize: true,
-        logging: true,
         ssl: { rejectUnauthorized: false }
       }),
     }),

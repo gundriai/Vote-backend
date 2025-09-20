@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
@@ -18,17 +19,21 @@ import { UserRole } from '../../types/enums';
 
 @Controller('api/banners')
 export class BannersController {
+  private readonly logger = new Logger(BannersController.name);
+
   constructor(private readonly bannersService: BannersService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN_USER)
   create(@Body() createBannerDto: CreateBannerDto) {
+    this.logger.log('Creating new banner');
     return this.bannersService.create(createBannerDto);
   }
 
   @Get()
   findAll() {
+    this.logger.log('Getting all banners');
     return this.bannersService.findAll();
   }
 

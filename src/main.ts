@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,13 +12,24 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: 'http://localhost:5173', // exact match
+    origin: true,  // Allow all origins for development
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     credentials: true,
   });
 
   app.use(cookieParser());
+  
+  // Enable sessions for storing redirect URLs
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to true in production with HTTPS
+      maxAge: 60000, // 1 minute - just enough for OAuth flow
+    },
+  }));
 
   await app.listen(3300, '0.0.0.0'); // Listen on all interfaces
   console.log(`Server running on http://localhost:3300`);

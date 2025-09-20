@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { PollOptionsService } from './poll-options.service';
 import { CreatePollOptionDto } from './dto/create-poll-option.dto';
@@ -18,17 +19,21 @@ import { UserRole } from '../../types/enums';
 
 @Controller('api/poll-options')
 export class PollOptionsController {
+  private readonly logger = new Logger(PollOptionsController.name);
+
   constructor(private readonly pollOptionsService: PollOptionsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN_USER)
   create(@Body() createPollOptionDto: CreatePollOptionDto) {
+    this.logger.log('Creating new poll option');
     return this.pollOptionsService.create(createPollOptionDto);
   }
 
   @Get()
   findAll() {
+    this.logger.log('Getting all poll options');
     return this.pollOptionsService.findAll();
   }
 

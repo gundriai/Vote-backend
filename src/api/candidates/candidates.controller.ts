@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
@@ -19,17 +20,21 @@ import { UserRole } from '../../types/enums';
 
 @Controller('api/candidates')
 export class CandidatesController {
+  private readonly logger = new Logger(CandidatesController.name);
+
   constructor(private readonly candidatesService: CandidatesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN_USER)
   create(@Body() createCandidateDto: CreateCandidateDto) {
+    this.logger.log('Creating new candidate');
     return this.candidatesService.create(createCandidateDto);
   }
 
   @Get()
   findAll() {
+    this.logger.log('Getting all candidates');
     return this.candidatesService.findAll();
   }
 
