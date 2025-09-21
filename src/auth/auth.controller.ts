@@ -18,7 +18,7 @@ export class AuthController {
     // Check if it's a mobile app (Expo/React Native)
     if (userAgent.includes('Expo') || userAgent.includes('ReactNative') || userAgent.includes('Mobile')) {
       this.logger.log('Detected mobile client');
-      return 'exp://192.168.1.6:8081/auth/success'; // Your Expo URL
+      return 'merovoteapp://auth/success'; // Deep link scheme
     }
     
     // Check if it's coming from a specific domain
