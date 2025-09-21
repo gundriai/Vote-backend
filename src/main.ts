@@ -30,9 +30,9 @@ async function bootstrap() {
       maxAge: 60000, // 1 minute - just enough for OAuth flow
     },
   }));
-
-  await app.listen(3300, '0.0.0.0'); // Listen on all interfaces
-  console.log(`Server running on http://localhost:3300`);
+  const port = process.env.PORT || 3300;
+  await app.listen(port, '0.0.0.0'); // Listen on all interfaces
+  console.log(`Server running on http://localhost:${port}`);
 }
 
 bootstrap();
