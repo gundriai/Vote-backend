@@ -18,7 +18,7 @@ This guide explains how to import and use the MeroVote API Postman collection fo
 
 ### 3. Configure Environment Variables
 The collection uses the following variables:
-- `baseUrl`: Set to `http://localhost:3000` (default)
+- `baseUrl`: Set to `https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net` (default)
 - `jwtToken`: Will be automatically set when you authenticate
 
 ## Collection Structure
@@ -206,7 +206,7 @@ When you get a `400` error, the response will include validation details:
 ## Troubleshooting
 
 ### Connection Issues
-- Ensure the backend is running on `http://localhost:3000`
+- Ensure the backend is running on `https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net`
 - Check if PostgreSQL is running and accessible
 - Verify environment variables are set correctly
 

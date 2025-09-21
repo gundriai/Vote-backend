@@ -4,7 +4,7 @@ This document describes all the API endpoints available in the MeroVote backend 
 
 ## Base URL
 ```
-http://localhost:3000
+https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net
 ```
 
 ## Authentication

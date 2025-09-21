@@ -8,7 +8,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(configService: ConfigService) {
     const clientID = configService.get<string>('GOOGLE_CLIENT_ID') || 'GOOGLE_CLIENT_ID_NOT_SET';
     const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET') || 'GOOGLE_CLIENT_SECRET_NOT_SET';
-    const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL') || 'http://localhost:3300/auth/google/callback';
+    const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL') || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/google/callback';
 
     super({ clientID, clientSecret, callbackURL, scope: ['email', 'profile'] });
 

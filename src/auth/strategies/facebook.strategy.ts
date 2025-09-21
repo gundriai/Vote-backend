@@ -8,7 +8,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(configService: ConfigService) {
     const clientID = configService.get<string>('FACEBOOK_APP_ID') || 'FACEBOOK_APP_ID_NOT_SET';
     const clientSecret = configService.get<string>('FACEBOOK_APP_SECRET') || 'FACEBOOK_APP_SECRET_NOT_SET';
-    const callbackURL = configService.get<string>('FACEBOOK_CALLBACK_URL') || 'http://localhost:3300/auth/facebook/callback';
+    const callbackURL = configService.get<string>('FACEBOOK_CALLBACK_URL') || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/facebook/callback';
 
     super({ clientID, clientSecret, callbackURL, scope: 'email', profileFields: ['id', 'displayName', 'emails', 'photos'] });
 

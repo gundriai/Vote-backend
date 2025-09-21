@@ -140,18 +140,18 @@ The polls table now includes:
 ### Test Category Filtering
 ```bash
 # Get political polls
-curl http://localhost:3000/api/polls/category/Political
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls/category/Political
 
 # Get daily polls  
-curl http://localhost:3000/api/polls/category/Daily
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls/category/Daily
 
 # Get face-to-face polls
-curl http://localhost:3000/api/polls/category/FaceToFace
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls/category/FaceToFace
 ```
 
 ### Test Creating Polls with Categories
 ```bash
-curl -X POST http://localhost:3000/api/polls \
+curl -X POST https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Test Poll",

@@ -57,7 +57,7 @@
 ```bash
 npm run start:dev
 ```
-The application will start on `http://localhost:3000`
+The application will start on `https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net`
 
 ### Production Build
 ```bash
@@ -70,16 +70,16 @@ npm run start:prod
 ### 1. Test Public Endpoints
 ```bash
 # Get all polls
-curl http://localhost:3000/api/polls
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls
 
 # Get active polls
-curl http://localhost:3000/api/polls/active
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls/active
 
 # Get all candidates
-curl http://localhost:3000/api/candidates
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/candidates
 
 # Get all banners
-curl http://localhost:3000/api/banners
+curl https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/banners
 ```
 
 ### 2. Test Protected Endpoints (Requires Authentication)
@@ -88,7 +88,7 @@ curl http://localhost:3000/api/banners
 # Then use it in subsequent requests
 
 # Create a poll (Admin only)
-curl -X POST http://localhost:3000/api/polls \
+curl -X POST https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/api/polls \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
