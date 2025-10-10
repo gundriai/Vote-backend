@@ -1,9 +1,16 @@
-import { Controller, Get, Req, Res, UseGuards, Logger, Query, Session } from '@nestjs/common';
-// ...existing code...
-import { AuthService } from './auth.service';
-import { Response } from 'express';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UseGuards,
+  Logger,
+  Query,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AuthService } from './auth.service';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -11,102 +18,94 @@ export class AuthController {
 
   constructor(private readonly authService: AuthService) {}
 
-  private determineRedirectUrl(req: any): string {
+  /**
+   * Determine redirect URL based on explicit query param or fallback heuristics.
+   */
+  private determineRedirectUrl(req: any, queryRedirect?: string): string {
+    if (queryRedirect) {
+      this.logger.log(`Using redirect URL from query: ${queryRedirect}`);
+      return queryRedirect;
+    }
+
     const userAgent = req.headers['user-agent'] || '';
     const referer = req.headers['referer'] || '';
-    
-    // Check if it's a mobile app (Expo/React Native)
-    if (userAgent.includes('Expo') || userAgent.includes('ReactNative') || userAgent.includes('Mobile')) {
+
+    if (userAgent.includes('Expo') || userAgent.includes('ReactNative')) {
       this.logger.log('Detected mobile client');
-      return 'merovoteapp://auth/success'; // Deep link scheme
+      return 'merovoteapp://auth/success';
     }
-    
-    // Check if it's coming from a specific domain
+
     if (referer.includes('localhost:5173')) {
       this.logger.log('Detected web client from localhost:5173');
       return 'http://localhost:5173/auth/success';
     }
-    
+
     if (referer.includes('localhost:8081')) {
       this.logger.log('Detected web client from localhost:8081');
       return 'http://localhost:8081/auth/success';
     }
-    
-    // Default fallback
-    this.logger.log('Using default redirect URL');
+
+    this.logger.log('Fallback redirect URL');
     return 'http://localhost:5173/auth/success';
   }
 
-  // Google login
+  // ---------------- GOOGLE ----------------
   @Get('/google')
   @UseGuards(AuthGuard('google'))
-  async googleLogin(@Req() req: any) {
-    this.logger.log('Google login initiated');
-    const redirectUrl = this.determineRedirectUrl(req);
-    this.logger.log(`Determined redirect URL: ${redirectUrl}`);
-    
-    // Store redirect URL in session for callback
+  async googleLogin(@Req() req: any, @Query('redirect_uri') redirectUri?: string) {
+    const redirectUrl = this.determineRedirectUrl(req, redirectUri);
+    this.logger.log(`Google login initiated. Redirect target: ${redirectUrl}`);
+
     req.session = req.session || {};
     req.session.redirectUrl = redirectUrl;
-    
-    return { status: 'redirecting to google' };
+
+    return { status: 'redirecting to Google' };
   }
 
-  // Google callback
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: any, @Res() res: Response) {
     this.logger.log('Google callback received');
+
     const result = await this.authService.socialLogin(req.user, 'google');
-
-    // Get redirect URL from session (set during login initiation)
     const redirectUrl = req.session?.redirectUrl || 'http://localhost:5173/auth/success';
-    this.logger.log(`Using redirect URL from session: ${redirectUrl}`);
-
-    // Add access token to redirect URL
     const finalRedirectUrl = `${redirectUrl}?access_token=${encodeURIComponent(result.accessToken)}`;
-    this.logger.log(`Redirecting to: ${finalRedirectUrl}`);
+
+    this.logger.log(`Redirecting user to: ${finalRedirectUrl}`);
     return res.redirect(finalRedirectUrl);
   }
 
-  // Facebook login
+  // ---------------- FACEBOOK ----------------
   @Get('/facebook')
   @UseGuards(AuthGuard('facebook'))
-  async facebookLogin(@Req() req: any) {
-    this.logger.log('Facebook login initiated');
-    const redirectUrl = this.determineRedirectUrl(req);
-    this.logger.log(`Determined redirect URL: ${redirectUrl}`);
-    
-    // Store redirect URL in session for callback
+  async facebookLogin(@Req() req: any, @Query('redirect_uri') redirectUri?: string) {
+    const redirectUrl = this.determineRedirectUrl(req, redirectUri);
+    this.logger.log(`Facebook login initiated. Redirect target: ${redirectUrl}`);
+
     req.session = req.session || {};
     req.session.redirectUrl = redirectUrl;
-    
-    return { status: 'redirecting to facebook' };
+
+    return { status: 'redirecting to Facebook' };
   }
 
-  // Facebook callback
   @Get('/facebook/callback')
   @UseGuards(AuthGuard('facebook'))
   async facebookCallback(@Req() req: any, @Res() res: Response) {
     this.logger.log('Facebook callback received');
+
     const result = await this.authService.socialLogin(req.user, 'facebook');
-    this.logger.log('Facebook login successful, access token generated');
-
-    // Get redirect URL from session (set during login initiation)
     const redirectUrl = req.session?.redirectUrl || 'http://localhost:5173/auth/success';
-    this.logger.log(`Using redirect URL from session: ${redirectUrl}`);
-
-    // Add access token to redirect URL
     const finalRedirectUrl = `${redirectUrl}?access_token=${encodeURIComponent(result.accessToken)}`;
-    this.logger.log(`Redirecting to: ${finalRedirectUrl}`);
+
+    this.logger.log(`Redirecting user to: ${finalRedirectUrl}`);
     return res.redirect(finalRedirectUrl);
   }
 
-  // Optional: me endpoint to fetch user info securely
+  // ---------------- JWT Protected /me ----------------
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async me(@Req() req: any) {
-    this.logger.log(`User info requested for user: ${req.user?.id || 'unknown'}`);
+    this.logger.log(`Fetching profile for user: ${req.user?.id}`);
     return req.user;
   }
 }
