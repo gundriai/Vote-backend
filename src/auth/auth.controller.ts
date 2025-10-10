@@ -18,9 +18,7 @@ export class AuthController {
 
   constructor(private readonly authService: AuthService) {}
 
-  /**
-   * Determine redirect URL based on explicit query param or fallback heuristics.
-   */
+  // ---------------- Helper ----------------
   private determineRedirectUrl(req: any, queryRedirect?: string): string {
     if (queryRedirect) {
       this.logger.log(`Using redirect URL from query: ${queryRedirect}`);
@@ -28,24 +26,14 @@ export class AuthController {
     }
 
     const userAgent = req.headers['user-agent'] || '';
-    const referer = req.headers['referer'] || '';
-
     if (userAgent.includes('Expo') || userAgent.includes('ReactNative')) {
-      this.logger.log('Detected mobile client');
       return 'merovoteapp://auth/success';
     }
 
-    if (referer.includes('localhost:5173')) {
-      this.logger.log('Detected web client from localhost:5173');
-      return 'http://localhost:5173/auth/success';
-    }
+    const referer = req.headers['referer'] || '';
+    if (referer.includes('localhost:5173')) return 'http://localhost:5173/auth/success';
+    if (referer.includes('localhost:8081')) return 'http://localhost:8081/auth/success';
 
-    if (referer.includes('localhost:8081')) {
-      this.logger.log('Detected web client from localhost:8081');
-      return 'http://localhost:8081/auth/success';
-    }
-
-    this.logger.log('Fallback redirect URL');
     return 'http://localhost:5173/auth/success';
   }
 
@@ -54,8 +42,9 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleLogin(@Req() req: any, @Query('redirect_uri') redirectUri?: string) {
     const redirectUrl = this.determineRedirectUrl(req, redirectUri);
-    this.logger.log(`Google login initiated. Redirect target: ${redirectUrl}`);
+    this.logger.log(`Google login initiated. Redirect: ${redirectUrl}`);
 
+    // Store in session before Passport redirects
     req.session = req.session || {};
     req.session.redirectUrl = redirectUrl;
 
@@ -68,7 +57,8 @@ export class AuthController {
     this.logger.log('Google callback received');
 
     const result = await this.authService.socialLogin(req.user, 'google');
-    const redirectUrl = req.session?.redirectUrl || 'http://localhost:5173/auth/success';
+
+    const redirectUrl = req.session?.redirectUrl || 'merovoteapp://auth/success';
     const finalRedirectUrl = `${redirectUrl}?access_token=${encodeURIComponent(result.accessToken)}`;
 
     this.logger.log(`Redirecting user to: ${finalRedirectUrl}`);
@@ -80,7 +70,7 @@ export class AuthController {
   @UseGuards(AuthGuard('facebook'))
   async facebookLogin(@Req() req: any, @Query('redirect_uri') redirectUri?: string) {
     const redirectUrl = this.determineRedirectUrl(req, redirectUri);
-    this.logger.log(`Facebook login initiated. Redirect target: ${redirectUrl}`);
+    this.logger.log(`Facebook login initiated. Redirect: ${redirectUrl}`);
 
     req.session = req.session || {};
     req.session.redirectUrl = redirectUrl;
@@ -94,7 +84,8 @@ export class AuthController {
     this.logger.log('Facebook callback received');
 
     const result = await this.authService.socialLogin(req.user, 'facebook');
-    const redirectUrl = req.session?.redirectUrl || 'http://localhost:5173/auth/success';
+
+    const redirectUrl = req.session?.redirectUrl || 'merovoteapp://auth/success';
     const finalRedirectUrl = `${redirectUrl}?access_token=${encodeURIComponent(result.accessToken)}`;
 
     this.logger.log(`Redirecting user to: ${finalRedirectUrl}`);
@@ -105,7 +96,6 @@ export class AuthController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async me(@Req() req: any) {
-    this.logger.log(`Fetching profile for user: ${req.user?.id}`);
     return req.user;
   }
 }
