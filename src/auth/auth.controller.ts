@@ -31,10 +31,10 @@ export class AuthController {
     }
 
     const referer = req.headers['referer'] || '';
-    if (referer.includes('localhost:5173')) return 'http://localhost:5173/auth/success';
+    if (referer.includes('localhost:5173')) return 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/success';
     if (referer.includes('localhost:8081')) return 'http://localhost:8081/auth/success';
 
-    return 'http://localhost:5173/auth/success';
+    return 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/success';
   }
 
   // ---------------- GOOGLE ----------------
@@ -58,7 +58,7 @@ export class AuthController {
 
     const result = await this.authService.socialLogin(req.user, 'google');
 
-    const redirectUrl = req.session?.redirectUrl || 'merovoteapp://auth/success';
+    const redirectUrl = req.session?.redirectUrl || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/success';
     const finalRedirectUrl = `${redirectUrl}?access_token=${encodeURIComponent(result.accessToken)}`;
 
     this.logger.log(`Redirecting user to: ${finalRedirectUrl}`);
@@ -85,7 +85,7 @@ export class AuthController {
 
     const result = await this.authService.socialLogin(req.user, 'facebook');
 
-    const redirectUrl = req.session?.redirectUrl || 'merovoteapp://auth/success';
+    const redirectUrl = req.session?.redirectUrl || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/success';
     const finalRedirectUrl = `${redirectUrl}?access_token=${encodeURIComponent(result.accessToken)}`;
 
     this.logger.log(`Redirecting user to: ${finalRedirectUrl}`);
