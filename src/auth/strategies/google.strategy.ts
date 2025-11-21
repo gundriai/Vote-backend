@@ -8,9 +8,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(configService: ConfigService) {
     const clientID = configService.get<string>('GOOGLE_CLIENT_ID') || 'GOOGLE_CLIENT_ID_NOT_SET';
     const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET') || 'GOOGLE_CLIENT_SECRET_NOT_SET';
-    const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL') || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/google/callback';
+  const rawCallback = configService.get<string>('GOOGLE_CALLBACK_URL') || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/google/callback';
+  // Normalize callback URL: remove duplicate slashes after the protocol (avoid //auth/...)
+  const callbackURL = rawCallback.replace(/([^:]\/)\/+/g, '$1');
 
-    super({ clientID, clientSecret, callbackURL, scope: ['email', 'profile'] });
+  Logger.log(`GoogleStrategy callbackURL = ${callbackURL}`, GoogleStrategy.name);
+
+  super({ clientID, clientSecret, callbackURL, scope: ['email', 'profile'] });
 
     if (clientID === 'GOOGLE_CLIENT_ID_NOT_SET' || clientSecret === 'GOOGLE_CLIENT_SECRET_NOT_SET') {
       Logger.warn('Google OAuth env vars not set (GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET). Using placeholders.', GoogleStrategy.name);

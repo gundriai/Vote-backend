@@ -8,9 +8,13 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(configService: ConfigService) {
     const clientID = configService.get<string>('FACEBOOK_APP_ID') || 'FACEBOOK_APP_ID_NOT_SET';
     const clientSecret = configService.get<string>('FACEBOOK_APP_SECRET') || 'FACEBOOK_APP_SECRET_NOT_SET';
-    const callbackURL = configService.get<string>('FACEBOOK_CALLBACK_URL') || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/facebook/callback';
+  const rawCallback = configService.get<string>('FACEBOOK_CALLBACK_URL') || 'https://merovotebackend-app-hxb0g6deh8auc5gh.centralindia-01.azurewebsites.net/auth/facebook/callback';
+  // Normalize callback URL: remove duplicate slashes after the protocol (avoid //auth/...)
+  const callbackURL = rawCallback.replace(/([^:]\/)\/+/g, '$1');
 
-    super({ clientID, clientSecret, callbackURL, scope: 'email', profileFields: ['id', 'displayName', 'emails', 'photos'] });
+  Logger.log(`FacebookStrategy callbackURL = ${callbackURL}`, FacebookStrategy.name);
+
+  super({ clientID, clientSecret, callbackURL, scope: 'email', profileFields: ['id', 'displayName', 'emails', 'photos'] });
 
     if (clientID === 'FACEBOOK_APP_ID_NOT_SET' || clientSecret === 'FACEBOOK_APP_SECRET_NOT_SET') {
       Logger.warn('Facebook OAuth env vars not set (FACEBOOK_APP_ID/FACEBOOK_APP_SECRET). Using placeholders.', FacebookStrategy.name);
