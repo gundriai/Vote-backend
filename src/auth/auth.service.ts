@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 
@@ -12,28 +12,41 @@ export class AuthService {
   ) { }
 
   async socialLogin(profile: any, provider: SocialProvider) {
-    const user = await this.usersService.upsertSocialUser({
-      provider,
-      providerId: profile.id,
-      email: profile.email,
-      name: profile.name,
-      photo: profile.photo,
-    });
+    try {
+      // defensive: make fields explicit
+      const providerId = profile?.id;
+      const email = profile?.email ?? undefined;
+      const name = profile?.name ?? profile?.displayName ?? undefined;
+      const photo = profile?.photo ?? profile?.photoUrl ?? profile?.photoUrlLarge ?? undefined;
 
-    const accessToken = await this.jwtService.signAsync({
-      sub: String(user.id),
-      email: user.email,
-      name: user.name,
-      provider: user.provider,
-      role: user.role,
-    });
+      Logger.log(`socialLogin: provider=${provider} providerId=${providerId} email=${email}`, AuthService.name);
 
-    // Add a redirect URL to the response for the frontend to handle
-    return {
-      accessToken,
-      user,
-      redirectUrl: '/?login=success',
-    };
+      const user = await this.usersService.upsertSocialUser({
+        provider,
+        providerId,
+        email,
+        name,
+        photo,
+      });
+
+      const accessToken = await this.jwtService.signAsync({
+        sub: String(user.id),
+        email: user.email,
+        name: user.name,
+        provider: user.provider,
+        role: user.role,
+      });
+
+      // Add a redirect URL to the response for the frontend to handle
+      return {
+        accessToken,
+        user,
+        redirectUrl: '/?login=success',
+      };
+    } catch (err) {
+      Logger.error(`socialLogin failed for provider=${provider}`, String(err), AuthService.name);
+      throw err;
+    }
   }
 }
 

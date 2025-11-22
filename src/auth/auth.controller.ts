@@ -17,10 +17,16 @@ export class AuthController {
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: any, @Res() res: Response) {
-    const result = await this.authService.socialLogin(req.user, 'google');
-    // Redirect with only the access token
-    const redirectUrl = `https://afnovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
-    return res.redirect(redirectUrl);
+    try {
+      const result = await this.authService.socialLogin(req.user, 'google');
+      // Redirect with only the access token
+      const redirectUrl = `https://afnovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
+      return res.redirect(redirectUrl);
+    } catch (err) {
+      console.error('Google callback error:', err);
+      // Return a simple HTML page so popup flows can display error info
+      return res.status(500).send(`<html><body><h3>Authentication error</h3><pre>${String(err)}</pre><p>Please check server logs.</p><script>if(window.opener){window.opener.postMessage({type:'oauth', error: 'server_error'}, '*'); window.close();}</script></body></html>`);
+    }
   }
   // Facebook login
   @Get('/facebook')
@@ -32,10 +38,15 @@ export class AuthController {
   @Get('/facebook/callback')
   @UseGuards(AuthGuard('facebook'))
   async facebookCallback(@Req() req: any, @Res() res: Response) {
-    const result = await this.authService.socialLogin(req.user, 'facebook');
-    console.log(result.accessToken);
-    const redirectUrl = `https://afnovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
-    return res.redirect(redirectUrl);
+    try {
+      const result = await this.authService.socialLogin(req.user, 'facebook');
+      console.log(result.accessToken);
+      const redirectUrl = `https://afnovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
+      return res.redirect(redirectUrl);
+    } catch (err) {
+      console.error('Facebook callback error:', err);
+      return res.status(500).send(`<html><body><h3>Authentication error</h3><pre>${String(err)}</pre><p>Please check server logs.</p><script>if(window.opener){window.opener.postMessage({type:'oauth', error: 'server_error'}, '*'); window.close();}</script></body></html>`);
+    }
   }
   // Optional: me endpoint to fetch user info securely
   @Get('/me')
