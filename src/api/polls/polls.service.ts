@@ -18,7 +18,7 @@ export class PollsService {
     private candidatesRepository: Repository<Candidate>,
     @InjectRepository(PollOption)
     private pollOptionsRepository: Repository<PollOption>,
-  ) {}
+  ) { }
 
   async create(createPollDto: CreatePollDto): Promise<Polls> {
     const poll = this.pollsRepository.create({
@@ -67,18 +67,33 @@ export class PollsService {
 
   async update(id: string, updatePollDto: UpdatePollDto): Promise<Polls> {
     const poll = await this.findOne(id);
-    
+
     const updateData: any = { ...updatePollDto };
-    
+
     if (updateData.startDate) {
       updateData.startDate = new Date(updateData.startDate);
     }
     if (updateData.endDate) {
       updateData.endDate = new Date(updateData.endDate);
     }
-    
+
+    // Handle candidates update
+    if (updateData.candidates && Array.isArray(updateData.candidates)) {
+      for (const candidateData of updateData.candidates) {
+        if (candidateData.id) {
+          await this.candidatesRepository.update(candidateData.id, {
+            ...(candidateData.name && { name: candidateData.name }),
+            ...(candidateData.description && { description: candidateData.description }),
+            ...(candidateData.imageUrl && { photo: candidateData.imageUrl }),
+          });
+        }
+      }
+      // Remove candidates from updateData as it's not a column in Polls entity
+      delete updateData.candidates;
+    }
+
     updateData.updatedAt = new Date();
-    
+
     Object.assign(poll, updateData);
     return await this.pollsRepository.save(poll);
   }
