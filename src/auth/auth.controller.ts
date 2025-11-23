@@ -20,7 +20,7 @@ export class AuthController {
     try {
       const result = await this.authService.socialLogin(req.user, 'google');
       // Redirect with only the access token
-      const redirectUrl = `https://afnovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
+      const redirectUrl = `https://merovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
       return res.redirect(redirectUrl);
     } catch (err) {
       console.error('Google callback error:', err);
@@ -41,7 +41,7 @@ export class AuthController {
     try {
       const result = await this.authService.socialLogin(req.user, 'facebook');
       console.log(result.accessToken);
-      const redirectUrl = `https://afnovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
+      const redirectUrl = `https://merovote.netlify.app/auth/success?access_token=${encodeURIComponent(result.accessToken)}`;
       return res.redirect(redirectUrl);
     } catch (err) {
       console.error('Facebook callback error:', err);
