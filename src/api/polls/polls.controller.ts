@@ -23,7 +23,7 @@ import { UserRole } from '../../types/enums';
 export class PollsController {
   private readonly logger = new Logger(PollsController.name);
 
-  constructor(private readonly pollsService: PollsService) {}
+  constructor(private readonly pollsService: PollsService) { }
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -102,5 +102,20 @@ export class PollsController {
   @Roles(UserRole.ADMIN_USER)
   remove(@Param('id') id: string) {
     return this.pollsService.remove(id);
+  }
+  @Post(':id/comments')
+  @UseGuards(JwtAuthGuard)
+  addComment(@Param('id') id: string, @Body() commentData: { content: string, author: string }) {
+    return this.pollsService.addComment(id, commentData);
+  }
+
+  @Post(':id/comments/:commentId/reactions')
+  @UseGuards(JwtAuthGuard)
+  addCommentReaction(
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+    @Body() body: { reactionType: 'gajjab' | 'bekar' | 'furious' }
+  ) {
+    return this.pollsService.addCommentReaction(id, commentId, body.reactionType);
   }
 }

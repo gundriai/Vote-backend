@@ -258,4 +258,43 @@ export class PollsService {
       await queryRunner.release();
     }
   }
+  async addComment(id: string, commentData: { content: string, author: string }): Promise<Polls> {
+    const poll = await this.findOne(id);
+    const newComment = {
+      id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      pollId: id,
+      content: commentData.content,
+      author: commentData.author,
+      createdAt: new Date().toISOString(),
+      gajjabCount: 0,
+      bekarCount: 0,
+      furiousCount: 0
+    };
+
+    const currentComments = Array.isArray(poll.comments) ? poll.comments : [];
+    poll.comments = [...currentComments, newComment];
+    poll.updatedAt = new Date();
+
+    return await this.pollsRepository.save(poll);
+  }
+
+  async addCommentReaction(id: string, commentId: string, reactionType: 'gajjab' | 'bekar' | 'furious'): Promise<Polls> {
+    const poll = await this.findOne(id);
+    const currentComments = Array.isArray(poll.comments) ? poll.comments : [];
+
+    const updatedComments = currentComments.map((comment: any) => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          [`${reactionType}Count`]: (comment[`${reactionType}Count`] || 0) + 1
+        };
+      }
+      return comment;
+    });
+
+    poll.comments = updatedComments;
+    // Don't update updatedAt for reactions to avoid resorting polls if that's based on updatedAt
+
+    return await this.pollsRepository.save(poll);
+  }
 }
