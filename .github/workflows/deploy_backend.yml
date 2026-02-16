@@ -1,38 +1,42 @@
-name: Deploy NestJS to Azure Function
+# NOTE: This workflow is currently disabled. 
+# The application is deployed to Azure Web App using main_merovotebackend-app.yml instead.
+# Azure Functions deployment is not suitable for this NestJS application.
 
-on:
-  push:
-    branches:
-      - main   # Change if you deploy from a different branch
+# name: Deploy NestJS to Azure Function
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+# on:
+#   push:
+#     branches:
+#       - main   # Change if you deploy from a different branch
 
-    steps:
-      # 1. Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
 
-      # 2. Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
-          cache: 'npm'
+#     steps:
+#       # 1. Checkout repository
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      # 3. Install dependencies
-      - name: Install dependencies
-        run: npm ci
+#       # 2. Setup Node.js
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 22
+#           cache: 'npm'
 
-      # 4. Build NestJS for Azure
-      - name: Build project
-        run: npm run build:azure
+#       # 3. Install dependencies
+#       - name: Install dependencies
+#         run: npm ci
 
-      # 5. Deploy to Azure Functions
-      - name: Deploy to Azure Functions
-        uses: Azure/functions-action@v1
-        with:
-          app-name: meroVote-backend-function
-          package: dist           # your compiled NestJS output folder
-          publish-profile: ${{ secrets.AZURE_MEROVOTE_BACKEND_PUBLISH_PROFILE }}
+#       # 4. Build NestJS for Azure
+#       - name: Build project
+#         run: npm run build:azure
+
+#       # 5. Deploy to Azure Functions
+#       - name: Deploy to Azure Functions
+#         uses: Azure/functions-action@v1
+#         with:
+#           app-name: meroVote-backend-function
+#           package: dist           # your compiled NestJS output folder
+#           publish-profile: ${{ secrets.AZURE_MEROVOTE_BACKEND_PUBLISH_PROFILE }}
